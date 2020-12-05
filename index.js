@@ -14,6 +14,8 @@ client.on('ready', async () => {
   try {
     pBrowser = await puppeteer.launch();
     pPage = await pBrowser.newPage();
+    await pPage.waitForTimeout(1000)
+    .then(() => console.log('Waited a second!'));
   } catch (error){console.error()};
 });
 
@@ -59,22 +61,21 @@ async function processCommand(receivedMessage) {
     await pPage.waitForSelector(resultsSelector);
     
   
-        const imgs = await pPage.evaluate(resultsSelector => {
-            const anchors = Array.from(document.querySelectorAll(resultsSelector));
-            return anchors.map(anchors=>{
-            return `${anchors.src}`;
-            })  }, resultsSelector);
-            console.log(imgs.join('\n'));
-            for (const src in imgs){
-                const exampleEmbed = new Discord.MessageEmbed()
-                    .setTitle('tshirt')// need to make title the name of creator
-                    .setImage(imgs[src]);
+    const imgsSrcs = await pPage.$$eval(resultsSelector,imgs => imgs.map(img => img.src));
+    //const imgsSrcs = await pPage.evaluateHandle(resultsSelector=>{return Array.from(document.querySelectorAll(resultsSelector))});
+      console.log(imgsSrcs);  
+      /* imgsSrcs.forEach(imgs => {
+        const exampleEmbed = new Discord.MessageEmbed()
+                        .setTitle('tshirt')// need to make title the name of creator
+                        .setImage(imgs.src);
+                    console.log(imgs.src);
+                    //receivedMessage.channel.send(exampleEmbed);
 
-                receivedMessage.channel.send(exampleEmbed);
-
-            }    
-        }
-   else {
+    }); */
+                    
+                
+      }
+  else {
     receivedMessage.channel.send("try appending a valid url, eg. `!tko https://jackbox.tv/somegiberish")
 }
 
