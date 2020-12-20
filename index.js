@@ -75,6 +75,14 @@ async function processCommand(receivedMessage) {
     
   
   //await pPage.screenshot({path: 'full.png', fullPage: true});
+} else if (primaryCommand === "sti") {
+  elemClass = "sti"
+  try {
+      await processSTI(pPage,receivedMessage,elemClass)
+  } catch(error){console.error();} 
+
+
+//await pPage.screenshot({path: 'full.png', fullPage: true});
 } else {
     receivedMessage.channel.send("I don't understand the command. Try `!tko`, `!champd` or `!patents`")  
   }
@@ -143,6 +151,35 @@ async function processShirt(page, receivedMessage, elemClass){
 }
 
 async function processBrack(page, receivedMessage, elemClass){
+
+  //receivedMessage.channel.send("Link: " + arguments)
+  receivedMessage.channel.send("Type: " + elemClass)
+
+  const resultsSelector="img." + elemClass + "-image[src]";
+  try{await page.waitForSelector(resultsSelector);}catch(error){console.error();}
+  page.waitForTimeout(3000);
+
+  const imgHandles = await page.$$eval(resultsSelector, (imgs) => {
+     return imgs.map((img)=>{
+     
+      return `${img.src}`
+    })
+
+  })
+
+ 
+  console.log(imgHandles);
+  for (const Handle in imgHandles){
+    const exampleEmbed = new Discord.MessageEmbed()
+                      .setImage(imgHandles[Handle]);
+
+                  receivedMessage.channel.send(exampleEmbed);
+  }
+  await pPage.screenshot({path: 'brack.png', fullPage: true});
+
+}
+
+async function processSTI(page, receivedMessage, elemClass){
 
   //receivedMessage.channel.send("Link: " + arguments)
   receivedMessage.channel.send("Type: " + elemClass)
