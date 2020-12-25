@@ -99,6 +99,7 @@ async function processCommand(receivedMessage) {
 
  async function processPSWC(page,receivedMessage,elemClass){
   receivedMessage.channel.send("Type: " + elemClass)
+  
   const divsSelector=`div.${elemClass}-share-container`;
   const resultsSelector = `div.${elemClass}-captioned-image.open`;
   console.log(divsSelector);
@@ -116,7 +117,9 @@ async function processCommand(receivedMessage) {
                     //console.log(imgs.src);
                     receivedMessage.channel.send(exampleEmbed);
   }
+  await pPage.screenshot({path: 'test.png', fullPage: true});
   console.log(URLs)
+  
 } 
 
 async function processShirt(page, receivedMessage, elemClass){
